@@ -2,6 +2,7 @@ package com.example.student_management.controller;
 
 import com.example.student_management.entity.Student;
 import com.example.student_management.service.StudentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +20,9 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<String> saveStudent(@RequestBody Student student) {
-        studentService.saveStudent(student);
-        return ResponseEntity.ok("Student saved!");
+    public ResponseEntity<Student> saveStudent(@RequestBody Student student) {
+        Student savedStudent = studentService.saveStudent(student);
+        return new ResponseEntity<>(savedStudent, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
@@ -32,19 +33,23 @@ public class StudentController {
 
     @GetMapping
     public ResponseEntity<List<Student>> getAllStudents() {
-        return ResponseEntity.ok(studentService.getAllStudents());
+        List<Student> students = studentService.getAllStudents();
+        return ResponseEntity.ok(students);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateStudent(@PathVariable Long id, @RequestBody Student student) {
-        student.setId(id);
-        studentService.updateStudent(student);
-        return ResponseEntity.ok("Student updated!");
+    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student student) {
+        try {
+            Student updatedStudent = studentService.updateStudent(id, student);
+            return ResponseEntity.ok(updatedStudent);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteStudent(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
-        return ResponseEntity.ok("Student deleted!");
+        return ResponseEntity.noContent().build();
     }
 }

@@ -48,6 +48,10 @@ public class StudentRepository {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
+            Student existingStudent = session.get(Student.class, student.getId());
+            if (existingStudent == null) {
+                throw new IllegalArgumentException("Student with id " + student.getId() + " not found");
+            }
             session.merge(student);
             transaction.commit();
             return student;

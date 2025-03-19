@@ -1,0 +1,19 @@
+meta {
+  name: Update Student
+  type: http
+  seq: 7
+}
+
+put {
+  url: http://localhost:8080/students/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id":1,
+    "name": "Tony Walls",
+    "email": "tony@example.com"
+  }
+}
